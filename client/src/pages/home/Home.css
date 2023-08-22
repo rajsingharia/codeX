@@ -1,0 +1,112 @@
+.home-page {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.home-page-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+
+.home-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: end;
+}
+
+.home-footer {
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+}
+
+.home-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    flex-grow: 1;
+    margin: 15px;
+}
+
+
+.home-body-code-editor {
+    background-color: #3E065F;
+    border-radius: 15px;
+    padding: 20px;
+    transition: 0.2s ease-in-out;
+    border: 2px solid #610398;
+}
+
+.home-body-code-editor:hover {
+    background-color: #7406b5;
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.test {
+    display: flex;
+    flex-direction: column;
+}
+
+.home-body-code-editor-title {
+    border-radius: 15px 15px 0px 0px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+.home-body-code-editor-description {
+    font-size: 15px;
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+    margin-top: 10px;
+    min-height: 50px;
+}
+
+.home-body-code-editor-language {
+    font-size: 15px;
+    color: #d998ff;
+    font-family: 'fira code', sans-serif;
+    margin-top: 10px;
+}
+
+.home-body-code-editor-createdAt {
+    font-size: 13px;
+    color: #d998ff;
+    font-family: 'sans-serif';
+    margin-top: 10px;
+}
+
+.home-body-code-editor-isLive {
+    font-size: 13px;
+    color: #d998ff;
+    font-family: 'sans-serif';
+    margin-top: 10px;
+}
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: #3E065F;
+    transform: translate(-50%, -50%);
+    border: 2px solid #7406b5;
+    padding: 20px;
+    border-radius: 15px;
+    width: 500px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}

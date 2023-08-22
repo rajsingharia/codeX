@@ -1,0 +1,70 @@
+
+.code-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    flex-direction: row;
+    gap: 10px;
+    color: white;
+}
+
+.code-editor {
+    display: flex;
+    flex-direction: row;
+    background-color: #3E065F;
+    border-radius: 15px;
+    padding: 17px;
+    margin-top: 10px;
+    border: 2px solid #610398;
+}
+
+.code-editor-settings {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+
+.code-editor-body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    gap: 20px;
+}
+
+.code-editor-code {
+    width: 1000px;
+    height: 600px;
+}
+
+.code-editor-input-output {
+    display: flex;
+    flex-direction: column;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    flex-grow: 1;
+    color: white;
+}
+
+.code-editor-output-card {
+    width: 400px;
+    margin: 5px;
+    border-radius: 5px;
+    min-height: 50px;
+    max-height: 400px;
+    word-wrap: break-word;
+    border: 2px solid #610398;
+}
+
+.code-editor-live-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    width: 100%;
+}
