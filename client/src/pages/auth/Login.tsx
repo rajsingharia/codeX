@@ -38,17 +38,18 @@ export const Login: React.FC<LoginProps> = ({ setLoginOrRegister }) => {
     console.log('Login Response ', response?.data)
     const accessToken = response.data.accessToken;
     login(accessToken);
+    navigate('/');
 
-    try {
-      await axios.post(
-        'http://localhost:5000/api/v1/auth/storeAccessToken',
-        { accessToken },
-        { withCredentials: true }
-      );
-      navigate('/');
-    } catch (error) {
-      console.error('Error storing accessToken in cookie:', error);
-    }
+    // try {
+    //   await axios.post(
+    //     'http://localhost:5000/api/v1/auth/storeAccessToken',
+    //     { accessToken },
+    //     { withCredentials: true }
+    //   );
+    //   navigate('/');
+    // } catch (error) {
+    //   console.error('Error storing accessToken in cookie:', error);
+    // }
   }
 
 

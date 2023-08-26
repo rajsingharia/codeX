@@ -44,6 +44,7 @@ export const loginUser: RequestHandler<unknown, unknown, SignInBody, unknown> = 
         if (!email) throw createHttpError(400, "email is empty");
         if (!password) throw createHttpError(400, "password is empty");
         const user = await AuthService.loginUser(email, password);
+        console.log("user", user);
         const accessToken = await AuthService.generateToken(user);
         res.status(200).send({
             message: "User was logged in successfully!",

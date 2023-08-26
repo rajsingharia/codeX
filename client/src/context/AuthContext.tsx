@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { IUser } from '../models/IUser';
 import { AuthAxios } from '../utils/AxiosConfig';
+import Cookies from 'universal-cookie';
 
 interface AuthContextProps {
   isLoggedIn: boolean;
@@ -17,10 +18,11 @@ const AuthProvider = ({ children }: React.PropsWithChildren<{ children: React.Re
   const [loading, setLoading] = useState(true);
 
   const authAxios = AuthAxios();
+  const cookies = new Cookies();
   const [user, setUser] = useState<IUser>({} as IUser);
 
   const verifyToken = (): boolean => {
-    const authToken = getAuthTokenFromCookies();
+    const authToken = getAuthTokenFromCookies(cookies);
     const hasToken = authToken ? true : false;
     // TODO: verify token with server
     return hasToken;
@@ -51,12 +53,12 @@ const AuthProvider = ({ children }: React.PropsWithChildren<{ children: React.Re
   }, []);
 
   const login = (accessToken: string) => {
-    setAuthTokenToCookies(accessToken);
+    setAuthTokenToCookies(cookies, accessToken);
     setIsLoggedIn(true);
   };
 
   const logout = () => {
-    clearCookies();
+    clearCookies(cookies);
     setIsLoggedIn(false);
   };
 
@@ -67,26 +69,18 @@ const AuthProvider = ({ children }: React.PropsWithChildren<{ children: React.Re
   );
 };
 
-function setAuthTokenToCookies(accessToken: string) {
-  //const cookies = new Cookies();
+function setAuthTokenToCookies(cookies: Cookies, accessToken: string) {
   // httpOnly: true, secure: true, sameSite: 'strict'
-  //cookies.set('accessToken', accessToken, { path: '/' });
-  //const authToken = cookies.get('accessToken');
-  //console.log('setAuthTokenToCookies: ', authToken);
-  localStorage.setItem('accessToken', accessToken);
+  cookies.set('accessToken', accessToken, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24) });
 }
 
-function getAuthTokenFromCookies() {
-  // const cookies = new Cookies();
-  // const authToken = cookies.get('accessToken'); 
-  // return authToken;
-  return localStorage.getItem('accessToken');
+function getAuthTokenFromCookies(cookies: Cookies) {
+  const authToken = cookies.get('accessToken', { doNotParse: true });
+  return authToken;
 }
 
-function clearCookies() {
-  // const cookies = new Cookies();
-  // cookies.remove('accessToken');
-  localStorage.removeItem('accessToken');
+function clearCookies(cookies: Cookies) {
+  cookies.remove('accessToken');
 }
 
 export { AuthContext, AuthProvider };

@@ -4,8 +4,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node source/index.ts",
-    "start": "nodemon source/index.ts",
+    "dev": "ts-node src/index.ts",
+    "start": "nodemon src/index.ts",
     "lint": "eslint . --ext .ts"
   },
   "author": "Raj Singharia",
