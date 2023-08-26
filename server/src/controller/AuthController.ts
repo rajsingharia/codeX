@@ -56,13 +56,6 @@ export const loginUser: RequestHandler<unknown, unknown, SignInBody, unknown> = 
     }
 }
 
-export const storeAccessToken: RequestHandler = async (req, res, next) => {
-    const { accessToken } = req.body;
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-    res.json({ message: 'AccessToken stored in cookie successfully.' });
-}
-
-
 export const getAllUsers: RequestHandler = async (req, res, next) => {
     try {
         const users = await AuthService.getAllUsers();

@@ -9,8 +9,6 @@ authRouter.post("/register", checkDuplicateEmail, AuthController.registerUser);
 
 authRouter.post("/login", AuthController.loginUser);
 
-authRouter.post('/storeAccessToken', AuthController.storeAccessToken)
-
 authRouter.get("/all", AuthController.getAllUsers);
 
 export default authRouter;
