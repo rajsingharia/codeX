@@ -23,8 +23,11 @@ const socketMap = new Map<string, Socket>();
 
 app.use(morgan("dev"));
 app.use(express.json());
+// TODO: url from env 
 app.use(cors({ origin: "http://localhost:5173", credentials: true} ));
 app.use(cookieParser());
+
+// TODO: Check if this is needed
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Headers",

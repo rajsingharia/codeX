@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 
 
 export const AuthAxios = () => {
-    //create config for credentials: 'include'
+    //TODO: include base url (from env)
     const config: AxiosRequestConfig = {
         withCredentials: true
     }
