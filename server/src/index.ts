@@ -11,10 +11,9 @@ import WebSocket from './websocket/WebSocket'
 import { createServer } from 'http';
 import cors from 'cors';
 import { Socket } from 'socket.io';
-import getSocketConnectionReady from './websocket/SocketConnection';
 import connectToDb from './db/mongoDB';
-import { ExtendedError } from 'socket.io/dist/namespace';
 import publicCodeEditorRouter from './routes/PublicCodeEditorRoutes';
+import SocketManager from './websocket/SocketConnection';
 
 const app = express();
 const httpServer = createServer(app);
@@ -37,10 +36,9 @@ app.use((req, res, next) => {
 });
 
 //verify token from socket connection
-io.use((socket: Socket, next: (err?: ExtendedError | undefined) => void) => {
-  verifyTokenFromSocket(socket, next);
-});
-getSocketConnectionReady(io, socketMap);
+io.use(verifyTokenFromSocket);
+const socketManager = new SocketManager(io, socketMap);
+socketManager.start();
 
 //connect to mongoDB
 connectToDb();
@@ -56,9 +54,9 @@ app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found"));
 });
 
-//error handeling
+//error handling
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-  let errorMessage = "An unknown error occured";
+  let errorMessage = "An unknown error occurred";
   let statusCode = 500
   if(isHttpError(error)) {
     errorMessage = error.message;

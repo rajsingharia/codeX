@@ -42,7 +42,7 @@ const verifyTokenFromSocket = (socket: Socket, next: (err?: ExtendedError | unde
                 next();
             });
     } catch (err) {
-        const errorMessage = (err instanceof Error) ? err.message : "An unknown error occured";
+        const errorMessage = (err instanceof Error) ? err.message : "An unknown error occurred";
         console.log(errorMessage);
         const error = new Error(errorMessage) as ExtendedError;
         next(error);
