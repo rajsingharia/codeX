@@ -20,10 +20,11 @@ Follow these steps to set up the CodeVerse project on your local machine.
 
    - Open a terminal and navigate to the `server` directory using `cd server`.
    - Run `npm install` to install the required dependencies.
+   - Install Docker Desktop
 
 3. **Run the Server**:
 
-   - After installing dependencies, run the server using `npm run dev`.
+   - After installing dependencies, run the server using `npm start`.
 
 ## Client Setup
 

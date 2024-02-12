@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node src/index.ts",
+    "dev": "docker-compose up && ts-node src/index.ts",
     "start": "docker-compose up && npm run dev",
     "lint": "eslint . --ext .ts"
   },

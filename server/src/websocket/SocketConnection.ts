@@ -1,24 +1,30 @@
 import { Socket } from "socket.io";
 import Websocket from "./WebSocket";
 import createHttpError from "http-errors";
-import Redis from "ioredis";
+import Redis, { RedisOptions } from "ioredis";
 import KafkaProducer from "../service/kafkaProducerService";
 
 class SocketManager {
   private io: Websocket;
-  private socketMap: Map<string, Socket>;
   private redisSubscriber: Redis;
   private redisPublisher: Redis;
-  private roomToUserAndCursorMapping: Map<string, Map<string, { lineNumber: number, column: number }>>;
   private kafkaProducer: KafkaProducer;
+  private redisConnection: RedisOptions = { host: 'redis', port: 6379 } as const
 
   constructor(io: Websocket, socketMap: Map<string, Socket>) {
     this.io = io;
-    this.socketMap = socketMap;
-    this.redisSubscriber = new Redis();
-    this.redisPublisher = new Redis();
-    this.roomToUserAndCursorMapping = new Map();
+    this.redisSubscriber = new Redis(this.redisConnection);
+    this.redisPublisher = new Redis(this.redisConnection);
     this.kafkaProducer = new KafkaProducer();
+  }
+
+  async getCursorPositions(roomId: string) {
+    const cursorPosition = await this.redisSubscriber.hgetall(`cursor_positions:${roomId}`);
+    const result = new Map()
+    for(const userId in cursorPosition) {
+      result.set(userId, JSON.parse(cursorPosition[userId]))
+    }
+    return result
   }
 
   handleConnection(socket: Socket) {
@@ -30,65 +36,40 @@ class SocketManager {
 
       socket.join(roomId);
       socket.broadcast.to(roomId).emit("user-connected", userId);
-      this.socketMap.set(userId, socket);
 
-      // Subscribe to the Redis channels for this room
       this.redisSubscriber.subscribe(`code_changes_${roomId}`);
       this.redisSubscriber.subscribe(`cursor_changes_${roomId}`);
 
-      // Listen for code changes and cursor movements from Redis and broadcast to room
       this.redisSubscriber.on('message', (channel, message) => {
-        const { userId: senderId, delta, cursor } = JSON.parse(message) as {
-          userId: string,
-          delta: any,
-          cursor: { lineNumber: number, column: number }
-        };
 
-        if (senderId !== userId) {
-          socket.emit("receive-code-changes", delta);
+        if (channel.startsWith('code_changes_')) {
+          const { delta } = JSON.parse(message)
+          socket.broadcast.to(roomId).emit("receive-code-changes", delta);
         }
 
-        // Emit cursor position to the room
-        socket.broadcast.to(roomId).emit("receive-cursor-position", { userId: senderId, cursor });
+        else if (channel.startsWith(`cursor_changes_`)) {
+          let currentUserAndCursorMapping = this.getCursorPositions(roomId)
+          socket.broadcast.to(roomId).emit("receive-cursor-position", currentUserAndCursorMapping);
+        }
+
       });
 
       socket.on("disconnect", () => {
         socket.broadcast.to(roomId).emit("user-disconnected", userId);
-        this.socketMap.delete(userId);
-
-        // Unsubscribe from the Redis channels when user disconnects
         this.redisSubscriber.unsubscribe(`code_changes_${roomId}`);
         this.redisSubscriber.unsubscribe(`cursor_changes_${roomId}`);
       });
     });
 
-    socket.on('send-code-changes', ({ delta, roomId, cursor }: { delta: any, roomId: string, cursor: { lineNumber: number, column: number } }) => {
-      // Publish code changes and cursor position to Redis channels for this room
-      this.redisPublisher.publish(`code_changes_${roomId}`, JSON.stringify({ userId: socket.data.userId, delta, cursor }));
-      this.redisPublisher.publish(`cursor_changes_${roomId}`, JSON.stringify({ userId: socket.data.userId, cursor }));
-
-      // Produce code changes to Kafka topic
+    socket.on('send-code-changes', ({ delta, roomId }: { delta: any, roomId: string }) => {
+      this.redisPublisher.publish(`code_changes_${roomId}`, JSON.stringify({ delta }));
       this.kafkaProducer.produceCodeChanges(roomId, socket.data.userId, delta);
     });
 
-    socket.on("send-cursor-position", (cursor: { lineNumber: number, column: number }) => {
-      const roomId = socket.data.roomId as string;
+    socket.on("send-cursor-position", (roomId, cursor: { lineNumber: number, column: number }) => {
       const userId = socket.data.userId as string;
-
-      let currentUserAndCursorMapping = this.roomToUserAndCursorMapping.get(roomId);
-
-      if (!currentUserAndCursorMapping) {
-        currentUserAndCursorMapping = new Map();
-        this.roomToUserAndCursorMapping.set(roomId, currentUserAndCursorMapping);
-      }
-
-      currentUserAndCursorMapping.set(userId, cursor);
-
-      // Broadcast the updated cursor positions to the room
-      socket.broadcast.to(roomId).emit("receive-cursor-position", currentUserAndCursorMapping);
-
-      // Publish cursor position to Redis channel
-      this.redisPublisher.publish(`cursor_changes_${roomId}`, JSON.stringify({ userId, cursor }));
+      this.redisPublisher.hset(`cursor_positions${roomId}`, userId, JSON.stringify(cursor))
+      this.redisPublisher.publish(`cursor_changes_${roomId}`, JSON.stringify({ userId }));
     });
   }
 

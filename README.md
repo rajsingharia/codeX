@@ -21,12 +21,23 @@ Codex is your coding playground – a place where you can explore, learn, and co
 3. **Run the App**:
 
     - Open two separate terminals and navigate to the `client` and `server` directories.
-    
     - In the `client` terminal, run `npm start`.
-    
-    - In the `server` terminal, run `npm run dev`.
-    
+    - In the `server` terminal, run `npm start`. This command now starts the server.
     - Open your browser and go to `http://localhost:5173` to start using codex!
+
+## Technologies Used 🛠️
+
+- **Client**:
+    - React
+    - (Any additional client-side technologies)
+
+- **Server**:
+    - Node.js
+    - Socket.io (for real-time communication)
+    - Redis (for scaling Socket.io and storing cursor movements)
+    - Kafka (as a queue system for pushing code changes to MongoDB)
+    - MongoDB (to store code)
+    - Docker (for spinning up redis and kafka)
 
 ## Project Structure 🏗️
 
@@ -54,19 +65,3 @@ Here's how the project is organized:
         - **utils**: Utility functions.
         - **websocket**: Websocket setup for live coding.
         - **index.ts**: Entry point for the server.
-
-## Contribute 🤝
-
-We love when the community helps us make codex even better! If you're interested, check out our [Contribution Guidelines](CONTRIBUTING.md).
-
-## Need Help? 🤔
-
-If you have questions or face any issues, feel free to [open an issue](https://github.com/yourusername/codex/issues). Our friendly community is here to help!
-
-## License 📜
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-Let's start coding and creating together at codex! 🎉
