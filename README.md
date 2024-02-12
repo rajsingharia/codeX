@@ -29,7 +29,7 @@ Codex is your coding playground – a place where you can explore, learn, and co
 
 - **Client**:
     - React
-    - (Any additional client-side technologies)
+    - Socker.io client
 
 - **Server**:
     - Node.js
